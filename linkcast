@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+import tomllib
+import logging
+import pathlib
+
+from collections.abc import Sequence
+
+LOGGER = logging.getLogger()
+DEAFULT_CONFIG_PATH = "./meta.toml"
+
+def get_meta_links(path=DEAFULT_CONFIG_PATH):
+    with open(path, "rb") as config:
+        cfg = tomllib.load(config)
+    return cfg
+
+def create_symlinks(cfgs: dict, config_target: str):
+    for name, config in cfgs.items():
+        source = config.get("source")
+        if not (platform_config := config.get(config_target)):
+            LOGGER.warning(f"`{config_target}` config does not exist for {name}")
+            continue
+
+        source = source or platform_config.get("source")
+        if not source:
+            LOGGER.error(f"no source specified for config {name}, skipping")
+            continue
+
+        target = platform_config.get("target_path")
+        if not source:
+            LOGGER.error(f"no `target_path` specified for config `[{name}.{config_target}]`, skipping")
+            continue
+
+        source = pathlib.Path(os.path.expanduser(os.path.expandvars(source)))
+        target = pathlib.Path(os.path.expanduser(os.path.expandvars(target)))
+        if target.exists() and target.is_symlink():
+            LOGGER.debug(f"skipping {target} as it already exist")
+            continue
+        src = source.resolve()
+        os.symlink(src, target, True)
+        print(f"symlinked {name}: {src} -> {target}")
+
+def main(args: Sequence[str] | None = None) -> int:
+    LOGGER.info("Hello, World!")
+    cfgs = get_meta_links()
+
+    platform = sys.platform
+    if platform == "win32":
+        config_target = "windows"
+    elif platform in ("linux", "darwin"):
+        config_target = "unix"
+    else:
+        LOGGER.error(f"unknown platform {platform}")
+        return 1
+
+    create_symlinks(cfgs, config_target)
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

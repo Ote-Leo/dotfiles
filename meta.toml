@@ -1,0 +1,19 @@
+# remapping for dotfiles symlinks
+
+[neovim]
+source = "./nvim/"
+
+[neovim.windows]
+target_path = "%LOCALAPPDATA%/nvim/"
+
+[neovim.unix]
+target_path = "$XDG_CONFIG_HOME/nvim/"
+
+[wezterm]
+source = "./wezterm/"
+
+[wezterm.windows]
+target_path = "~/.config/wezterm/"
+
+[wezterm.unix]
+target_path = "$XDG_CONFIG_HOME/wezterm/"
