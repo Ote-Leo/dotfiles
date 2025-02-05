@@ -17,3 +17,13 @@ target_path = "~/.config/wezterm/"
 
 [wezterm.unix]
 target_path = "$XDG_CONFIG_HOME/wezterm/"
+
+
+[nushell]
+source = "./nushell/"
+
+[nushell.windows]
+target_path = "%APPDATA%/nushell"
+
+[nushell.unix]
+target_path = "$XDG_CONFIG_HOME/nushell/"
