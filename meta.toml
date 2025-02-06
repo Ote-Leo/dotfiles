@@ -1,29 +1,20 @@
-# remapping for dotfiles symlinks
-
 [neovim]
-source = "./nvim/"
-
+source = "nvim"
 [neovim.windows]
 target_path = "%LOCALAPPDATA%/nvim/"
-
 [neovim.unix]
 target_path = "$XDG_CONFIG_HOME/nvim/"
 
 [wezterm]
-source = "./wezterm/"
-
+source = "wezterm"
 [wezterm.windows]
-target_path = "~/.config/wezterm/"
-
+target_path = "%USERPROFILE%/.config/wezterm/"
 [wezterm.unix]
 target_path = "$XDG_CONFIG_HOME/wezterm/"
 
-
 [nushell]
-source = "./nushell/"
-
+source = "nushell"
 [nushell.windows]
 target_path = "%APPDATA%/nushell"
-
 [nushell.unix]
 target_path = "$XDG_CONFIG_HOME/nushell/"

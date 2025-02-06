@@ -6,65 +6,71 @@ import tomllib
 import logging
 import pathlib
 
+from collections.abc import Sequence
+
+import argparse as ap
+
 LOGGER = logging.getLogger()
-DEAFULT_CONFIG_PATH = "./meta.toml"
+DEAFULT_CONFIG_PATH = "meta.toml"
+
+PARSER = ap.ArgumentParser(
+	description="Spread the config seeds across this shit soil",
+)
+
+PARSER.add_argument(
+	"-u", "--use",
+	help=f"Use input file as a symlink destination reference. (defaults to {DEAFULT_CONFIG_PATH})",
+	default=DEAFULT_CONFIG_PATH,
+)
 
 
-def get_meta_links(path=DEAFULT_CONFIG_PATH):
-	with open(path, "rb") as config:
-		cfg = tomllib.load(config)
-	return cfg
+PARSER.add_argument(
+	"configs",
+	nargs="*",
+	help="Select some of the configs to symlink (if none were given, then all configurations will be symlinked)",
+)
 
+def main(args: Sequence[str] | None = None) -> int:
+	ns = PARSER.parse_args(args)
+	with open(ns.use, "rb") as config:
+		cfgs = tomllib.load(config)
 
-def create_symlinks(cfgs, config_target):
+	if (platform := sys.platform) == "win32":
+		config_target = "windows"
+	elif platform in ("linux", "darwin"):
+		config_target = "unix"
+	else:
+		LOGGER.error(f"unknown platform {platform}")
+		return 1
+
+	configs = ns.configs
+
 	for name, config in cfgs.items():
+		if configs and name not in configs:
+			continue
+
 		source = config.get("source")
-		platform_config = config.get(config_target)
-		if platform_config is None:
-			LOGGER.warning(str.format("`{}` config does not exist for {}", config_target, name))
+		
+		if not (platform_config := config.get(config_target)):
 			continue
 
-		source = source or platform_config.get("source")
-		if not source:
-			LOGGER.error(str.format("no source specified for config {}, skipping", name))
+		if not (source := source or platform_config.get("source")):
+			LOGGER.error(f"no source specified for config {name}, skipping")
 			continue
 
-		target = platform_config.get("target_path")
-		if not source:
-			LOGGER.error(
-				str.format(
-					"no `target_path` specified for config `[{}.{}]`, skipping",
-					name,
-					config_target,
-				)
-			)
+		if not (target := platform_config.get("target_path")):
+			LOGGER.error(f"no `target_path` specified for config `[{name}.{config_target}]`, skipping")
 			continue
 
 		source = pathlib.Path(os.path.expanduser(os.path.expandvars(source)))
 		target = pathlib.Path(os.path.expanduser(os.path.expandvars(target)))
 		if target.exists() and target.is_symlink():
-			LOGGER.debug(str.format("skipping {} as it already exist", target))
+			LOGGER.debug(f"skipping {target} as it already exist")
 			continue
 
 		src = source.resolve()
 		os.symlink(src, target, os.path.isdir(src))
-		print(str.format("symlinked {}: {} -> {}", name, src, target))
-
-
-def main(args=None):
-	LOGGER.info("Hello, World!")
-	cfgs = get_meta_links()
-
-	platform = sys.platform
-	if platform == "win32":
-		config_target = "windows"
-	elif platform in ("linux", "darwin"):
-		config_target = "unix"
-	else:
-		LOGGER.error(str.format("unknown platform {}", platform))
-		return 1
-
-	create_symlinks(cfgs, config_target)
+		print(f"symlinked {name}: {src} -> {target}")
 
 	return 0
 
