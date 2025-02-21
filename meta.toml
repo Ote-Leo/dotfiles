@@ -18,3 +18,10 @@ source = "nushell"
 target_path = "%APPDATA%/nushell/"
 [nushell.unix]
 target_path = "$XDG_CONFIG_HOME/nushell/"
+
+[git]
+source = "git"
+[git.windows]
+target_path = "%USERPROFILE%/.config/git/"
+[git.unix]
+target_path = "$XDG_CONFIG_HOME/git/"
