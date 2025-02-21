@@ -1,0 +1,71 @@
+{
+	"if … { … }": {
+		"prefix": "if",
+		"body": [
+			"if ${1:false} {",
+			"\t$2",
+			"}"
+		]
+	},
+	"else if … { … }": {
+		"prefix": "elif",
+		"body": [
+			"else if ${1:false} {",
+			"\t$2",
+			"}"
+		]
+	},
+	"else { … }": {
+		"prefix": "else",
+		"body": [
+			"else {",
+			"\t$1",
+			"}"
+		]
+	},
+	"loop { … }": {
+		"prefix": "loop",
+		"body": [
+			"loop {",
+			"\t$1",
+			"}"
+		]
+	},
+	"if let … = … { … }": {
+		"prefix": "iflet",
+		"body": [
+			"if let $1 = $2 {",
+			"\t$3",
+			"}"
+		]
+	},
+	"else if let … = … { … }": {
+		"prefix": "eliflet",
+		"body": [
+			"else if let $1 = $2 {",
+			"\t$3",
+			"}"
+		]
+	},
+	"while let … = … { … }": {
+		"prefix": "whilelet",
+		"body": [
+			"while let $1 = $2 {",
+			"\t$3",
+			"}"
+		]
+	},
+	"#[derive(…)]": {
+		"prefix": "derive",
+		"body": [ "#[derive($1)]" ]
+	},
+	"#[cfg(test)] mod … { … }": {
+		"prefix": "testmod",
+		"body": [
+			"#[cfg(test)]",
+			"mod ${1:tests} {",
+			"\t$2",
+			"}"
+		]
+	}
+}

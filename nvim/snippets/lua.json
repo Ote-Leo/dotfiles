@@ -1,0 +1,29 @@
+{
+	"if … then … end": {
+		"prefix": "if",
+		"description": "",
+		"body": [
+			"if ${1:false} then",
+			"\t$2",
+			"end"
+		]
+	},
+	"else if … then … end": {
+		"prefix": "elif",
+		"description": "",
+		"body": [
+			"else if ${1:false} then",
+			"\t$2",
+			"end"
+		]
+	},
+	"else … end": {
+		"prefix": "else",
+		"description": "",
+		"body": [
+			"else then",
+			"\t$1",
+			"end"
+		]
+	},
+}
