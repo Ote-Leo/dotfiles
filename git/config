@@ -2,4 +2,8 @@
 	name = Ote Leo
 	email = ote.leo73@gmail.com
 [core]
+	editor = nvim
+	whitespace = fix,trailing-space,cr-at-eol
 	autocrlf = true
+
+# vim: filetype=gitconfig
