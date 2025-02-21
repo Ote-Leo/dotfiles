@@ -10,11 +10,11 @@ local LSP_AUGROUPS = {
 local AUTO_INSTALL_SERVERS = {
 	rust_analyzer = {},
 	pyright = {},
+	lua_ls = {},
 }
 
 --- LSP found in system
 local SERVERS = {
-	lua_ls = {},
 	nushell = {},
 }
 
