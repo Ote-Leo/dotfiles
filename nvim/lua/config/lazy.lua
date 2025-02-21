@@ -34,8 +34,6 @@ require("lazy").setup({
 			"rose-pine/neovim",
 			config = function() vim.cmd.colorscheme("rose-pine-main") end
 		},
-		{ "AlexvZyl/nordic.nvim" },
-		{ "miikanissi/modus-themes.nvim" },
 
 		{ import = "config.plugins" },
 	},
