@@ -35,6 +35,15 @@ vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left wind
 
 vim.keymap.set("t", "<escape><escape>", "<C-\\><C-n>", { desc = "Escape terminal mode" })
 
+vim.keymap.set(
+	"n",
+	"<leader>td",
+	function()
+		vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+	end,
+	{ desc = "[T]oggle [D]iagnostics" }
+)
+
 vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 	desc = "Highlight yanked text for a short period of time",
 	group = vim.api.nvim_create_augroup("__silver.highlight_yank", { clear = true }),
