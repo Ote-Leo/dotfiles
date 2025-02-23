@@ -2,7 +2,7 @@ require("config.lazy")
 
 -- Sane options
 vim.opt.clipboard = "unnamedplus"
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "yes:2"
 
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
