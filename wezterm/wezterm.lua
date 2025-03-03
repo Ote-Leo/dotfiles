@@ -93,5 +93,6 @@ config.show_tabs_in_tab_bar = true
 config.use_fancy_tab_bar = false
 config.show_new_tab_button_in_tab_bar = true
 config.tab_bar_at_bottom = true
+config.adjust_window_size_when_changing_font_size = false
 
 return config
