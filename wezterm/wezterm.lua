@@ -1,5 +1,6 @@
 local wezterm = require "wezterm"
 local keybindings = require "keybindings"
+local colorschemes = require "colorschemes"
 
 ---@param window wezterm.Window
 ---@param pane wezterm.Pane
@@ -83,7 +84,7 @@ wezterm.on(
 local config = wezterm.config_builder()
 
 config.font = wezterm.font { family = "FiraCode Nerd Font" }
-config.color_scheme = "rose-pine"
+config.colors = colorschemes.NVIM_DARK.colors
 config.default_prog = { "nu" }
 
 config.leader = keybindings.leader
