@@ -1,19 +1,16 @@
 local wezterm = require "wezterm"
 local util = require "util"
 local act = wezterm.action
-
-local PATHS = {
-	[[D:\Work_Domain\]],
-	[[D:\Work_Domain\asgard\]],
-	[[D:\Work_Domain\asgard\nvim_plugins\]],
-}
+local targets = require "sessionizer_targets"
 
 local M = {}
 
 M.open_todo = function(window, pane)
-	window:perform_action(act.SpawnCommandInNewTab {
-		args = { "nvim", "d:/Work_Domain/asgard/TODO.md" },
-	}, pane)
+	local todo_file = targets.todo_file
+	if not todo_file then
+		return
+	end
+	window:perform_action(act.SpawnCommandInNewTab { args = { "nvim", todo_file } }, pane)
 end
 
 M.toggle = function(window, pane)
@@ -25,7 +22,7 @@ M.toggle = function(window, pane)
 		"-td",
 		"^.git$",
 		"--max-depth=2",
-	}, PATHS)
+	}, targets.paths or {})
 
 	local success, stdout, stderr = wezterm.run_child_process(command)
 
@@ -35,9 +32,9 @@ M.toggle = function(window, pane)
 	end
 
 	for line in stdout:gmatch("([^\n]*)\n?") do
-		local project = line:gsub([[\.git\$]], "")
+		local project = line:gsub([=[[\/].git[\/]$]=], "")
 		local label = project
-		local id = project:gsub([[.*\]], "")
+		local id = project:gsub([=[.*[\/]]=], "")
 		table.insert(projects, { label = tostring(label), id = tostring(id) })
 	end
 
