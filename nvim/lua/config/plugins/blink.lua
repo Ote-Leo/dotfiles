@@ -1,3 +1,8 @@
+-- Mapping <C-D> to insert digraph mode
+vim.keymap.set("i", "<C-D>", function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-K>", true, false, true), "n", true)
+end, { noremap = true })
+
 return {
 	{
 		"saghen/blink.cmp",
