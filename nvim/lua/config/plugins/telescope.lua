@@ -51,6 +51,7 @@ local function init()
 	vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
 	vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
 	vim.keymap.set("n", "<leader>sp", search_pacakges_files, { desc = "[S]earch [P]acakges files" })
+	vim.keymap.set("n", "<leader>sc", function() builtin.colorscheme { enable_preview = true } end , { desc = "[S]elect [C]olorscheme" })
 
 	vim.keymap.set("n", "<leader>s/", function()
 		builtin.live_grep {
