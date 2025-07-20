@@ -5,5 +5,13 @@
 	editor = nvim
 	whitespace = fix,trailing-space,cr-at-eol
 	autocrlf = true
+[alias]
+	st = status -s
+	lol = log --graph --oneline
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+[help]
+	autocorrect = prompt
 
 # vim: filetype=gitconfig
