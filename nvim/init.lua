@@ -59,3 +59,25 @@ vim.api.nvim_create_autocmd({ "TermOpen" }, {
 		vim.opt.signcolumn = "no"
 	end,
 })
+
+---Checks if the system theme is light or dark and then sets the `background`
+---variable accordingly
+local function sync_theme_with_system_theme()
+	if vim.uv.os_uname().sysname == "Windows_NT" then
+		local SYSTEM_THEME_COMMAND = [[reg query ]]
+			.. [[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize ]]
+			.. [[/v AppsUseLightTheme]]
+		local mode = vim.fn.system(SYSTEM_THEME_COMMAND)
+		if mode:find("0x1") then
+			vim.o.background = "light"
+		else
+			vim.o.background = "dark"
+		end
+	end
+end
+
+-- TODO: Find a way to listen to Windows Event
+--     Event Name: WM_SETTINGCHANGE
+--     Sent To: All top-level windows
+--     lParam: "ImmersiveColorSet" or "WindowsThemeElement"
+sync_theme_with_system_theme()

@@ -84,7 +84,12 @@ wezterm.on(
 local config = wezterm.config_builder()
 
 config.font = wezterm.font { family = "FiraCode Nerd Font" }
-config.colors = colorschemes.NVIM_DARK.colors
+if wezterm.gui.get_appearance() == "Light" then
+	config.colors = colorschemes.NVIM_LIGHT.colors
+else
+	config.colors = colorschemes.NVIM_DARK.colors
+end
+
 config.default_prog = { "nu" }
 
 config.leader = keybindings.leader
