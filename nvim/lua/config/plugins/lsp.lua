@@ -18,6 +18,9 @@ local SERVERS = {
 	nushell = {},
 }
 
+-- CURSOR_HEIGHT = CURSOR_ASPECT_RATIO * CURSOR_WIDTH (I'm guessing)
+local CURSOR_ASPECT_RATIO = 2
+
 ---@class Event
 ---@field id number autocommand id
 ---@field event string name of the triggered event |autocmd-events|
@@ -44,17 +47,129 @@ local function register_format_on_save(ev, client)
 	})
 end
 
+---Gets the current buffer `offset_encoding`, by iterating through all the
+---attached LSP clients and getting the first recorded `offset_encoding`.
+---@return string?
+local function get_lsp_client_offset_encoding()
+	local bufnr = vim.api.nvim_win_get_buf(0)
+
+	local offset_encoding = nil
+	for _, client in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+		local encoding = client.offset_encoding
+		if encoding ~= nil then
+			offset_encoding = encoding
+			break
+		end
+	end
+
+	return offset_encoding
+end
+
+---Generate "Goto" keymaps combinations for the given `jumper` function. A given
+---`jumper` will have the follwing mappings generated:
+---
+---1. `g<jump_key>`: just get their.
+---2. `gV<jump_key>`: just get their in a **vertical** split.
+---3. `gH<jump_key>`: just get their in a **horizontal** split.
+---4. `gS<jump_key>`: just get their in a **split** (determines either vertically or
+---   horizontally based on the window size).
+---5. `gT<jump_key>`: just get their in a new **tab**.
+---@param jumper function
+---@param jump_key string
+---@param mapper function
+---@param mapping_description string
+---@return nil
+local function generate_jumpers(jumper, jump_key, mapper, mapping_description)
+	local jump_types = {
+		 { "", nil, "" },
+		 { "V", "vsplit", " [V]ertically " },
+		 { "H", "split", " [H]orizontally " },
+		 { "T", "tab", " by [T]ab " },
+	}
+
+	for _, config in pairs(jump_types) do
+		local key = config[1]
+		local jump_type = config[2]
+		local description = config[3]
+
+
+		mapper(
+			"g" .. key .. jump_key,
+			function ()
+				local offset_encoding = get_lsp_client_offset_encoding()
+				local opts = {
+					 jump_type = jump_type,
+					 offset_encoding = offset_encoding,
+				}
+				jumper(opts)
+			end,
+			"[G]o" .. description .. "to " .. mapping_description
+		)
+	end
+
+	mapper(
+		"gS" .. jump_key,
+		function ()
+			local width = vim.api.nvim_win_get_width(0)
+			local height = vim.api.nvim_win_get_height(0)
+
+			local split_type = "vsplit"
+			if (CURSOR_ASPECT_RATIO*height) >= width then
+				split_type = "split"
+			end
+			local offset_encoding = get_lsp_client_offset_encoding()
+
+			local opts = {
+				 jump_type = split_type,
+				 offset_encoding = offset_encoding,
+			}
+
+			jumper(opts)
+		end,
+		"[G]o by [S]plit to " .. mapping_description
+	)
+end
+
 local function register_telescope_keymap(ev, client)
 	local map = function(keys, func, desc)
 		vim.keymap.set("n", keys, func, { buffer = ev.buf, desc = "LSP: " .. desc })
 	end
 
 	local telescope_builtin = require "telescope.builtin"
-	map("gd", telescope_builtin.lsp_definitions, "[G]oto [D]efinition")
-	map("gr", telescope_builtin.lsp_references, "[G]oto [R]eferences")
-	map("gI", telescope_builtin.lsp_implementations, "[G]oto [I]mplementation")
+	local jump_list = {
+		{ telescope_builtin.lsp_definitions, "d", "[D]efinition" },
+		{ telescope_builtin.lsp_implementations, "I", "[I]mplementation" },
+	}
+
+	for _, jumps in pairs(jump_list) do
+		local jumper, jump_key, desc   = jumps[1], jumps[2], jumps[3]
+		generate_jumpers(jumper, jump_key, map, desc)
+	end
+
+	map(
+		"gr",
+		function()
+			local offset_encoding = get_lsp_client_offset_encoding()
+			local opts = {
+				 offset_encoding = offset_encoding,
+			}
+			telescope_builtin.lsp_references(opts)
+		end,
+		"[G]oto [R]eferences"
+	)
+
 	map("<leader>D", telescope_builtin.lsp_type_definitions, "Type [D]efinition")
-	map("<leader>ds", telescope_builtin.lsp_document_symbols, "[D]ocument [S]ymbols")
+	map(
+		"<leader>ds",
+		function()
+			local offset_encoding = get_lsp_client_offset_encoding()
+			local opts = {
+				 offset_encoding = offset_encoding,
+			}
+			telescope_builtin.lsp_document_symbols(opts)
+		end,
+		"[D]ocument [S]ymbols"
+	)
 	map("<leader>ws", telescope_builtin.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 end
 
