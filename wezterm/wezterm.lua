@@ -69,7 +69,7 @@ wezterm.on(
 		end
 
 		if window:active_tab():tab_id() ~= 0 then
-			arrow_foreground = { Foreground = { color = "#1E2030" } }
+			arrow_foreground = { Foreground = { Color = "#1E2030" } }
 		end -- arrow color based on if tab is first pane
 
 		window:set_left_status(wezterm.format {
@@ -83,7 +83,8 @@ wezterm.on(
 
 local config = wezterm.config_builder()
 
-config.font = wezterm.font { family = "FiraCode Nerd Font" }
+
+-- config.font = wezterm.font { family = "FiraCode Nerd Font" }
 if wezterm.gui.get_appearance() == "Light" then
 	config.colors = colorschemes.NVIM_LIGHT.colors
 else

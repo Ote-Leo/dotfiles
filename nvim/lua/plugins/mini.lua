@@ -9,7 +9,9 @@ local function init()
 	require("mini.jump2d").setup {}
 	require("mini.move").setup {}
 	require("mini.surround").setup {}
-	require("mini.pairs").setup {}
+	require("mini.pairs").setup {
+		modes = { command = true }
+	}
 
 	vim.api.nvim_create_autocmd({ "FileType" }, {
 		pattern = "rust",

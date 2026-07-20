@@ -81,3 +81,7 @@ end
 --     Sent To: All top-level windows
 --     lParam: "ImmersiveColorSet" or "WindowsThemeElement"
 sync_theme_with_system_theme()
+
+vim.opt.fileformats = { "unix", "dos" }
+vim.opt.fileformat = "unix"
+vim.opt.winborder = "bold"

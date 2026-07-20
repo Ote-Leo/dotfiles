@@ -8,14 +8,12 @@ local LSP_AUGROUPS = {
 
 --- Install the following servers
 local AUTO_INSTALL_SERVERS = {
-	rust_analyzer = {},
-	pyright = {},
-	lua_ls = {},
 }
 
 --- LSP found in system
 local SERVERS = {
 	nushell = {},
+	clangd = {},
 }
 
 -- CURSOR_HEIGHT = CURSOR_ASPECT_RATIO * CURSOR_WIDTH (I'm guessing)
@@ -202,13 +200,37 @@ local function register_keymap(ev, client)
 	})
 end
 
+-- local function configure_tinymist(lspconfig)
+-- 	lspconfig["tinymist"].setup { -- Alternatively, can be used `vim.lsp.config["tinymist"]`
+-- 		-- ...
+-- 		on_attach = function(client, bufnr)
+-- 			vim.keymap.set("n", "<leader>tp", function()
+-- 				client:exec_cmd({
+-- 					title = "pin",
+-- 					command = "tinymist.pinMain",
+-- 					arguments = { vim.api.nvim_buf_get_name(0) },
+-- 				}, { bufnr = bufnr })
+-- 			end, { desc = "[T]inymist [P]in", noremap = true })
+--
+-- 			vim.keymap.set("n", "<leader>tu", function()
+-- 				client:exec_cmd({
+-- 					title = "unpin",
+-- 					command = "tinymist.pinMain",
+-- 					arguments = { vim.v.null },
+-- 				}, { bufnr = bufnr })
+-- 			end, { desc = "[T]inymist [U]npin", noremap = true })
+-- 		end,
+-- 	}
+-- end
+
 local function init(_, opts)
-	local lspconfig = require "lspconfig"
 	local blink = require "blink.cmp"
 
 	for server, cfg in pairs(opts.servers) do
 		cfg.capabilities = blink.get_lsp_capabilities(cfg.capabilities)
-		lspconfig[server].setup(cfg)
+		-- vim.lsp.config[server].setup(cfg)
+		-- vim.lsp.config(server, cfg or {}).enable()
+		vim.lsp.enable(server)
 	end
 
 	vim.api.nvim_create_autocmd("LspAttach", {
@@ -219,7 +241,7 @@ local function init(_, opts)
 				return
 			end
 
-			register_format_on_save(ev, client)
+			-- register_format_on_save(ev, client)
 			register_telescope_keymap(ev, client)
 			register_keymap(ev, client)
 
@@ -233,16 +255,35 @@ local function init(_, opts)
 		end,
 	})
 
-	require('mason-tool-installer').setup { ensure_installed = vim.tbl_keys(AUTO_INSTALL_SERVERS) }
-	require('mason-lspconfig').setup {
-		handlers = {
-			function(server_name)
-				local cfg = AUTO_INSTALL_SERVERS[server_name] or {}
-				cfg.capabilities = blink.get_lsp_capabilities(cfg.capabilities)
-				lspconfig[server_name].setup(cfg)
-			end,
+	require('mason-tool-installer').setup { ensure_installed = vim.tbl_keys {
+		rust_analyzer = {},
+		pyright = {},
+		lua_ls = {},
+		tinymist = {},
+		ts_ls = {
+			-- root_dir = require("lspconfig").util.root_pattern({ "package.json", "tsconfig.json" }),
+			-- single_file_support = false,
+			-- settings = {},
+		},
+		denols = {
+			-- root_dir = require("lspconfig").util.root_pattern({"deno.json", "deno.jsonc"}),
+			-- single_file_support = false,
+			-- settings = {},
 		},
 	}
+}
+require('mason-lspconfig').setup {
+	handlers = {
+		function(server_name)
+			local cfg = AUTO_INSTALL_SERVERS[server_name] or {}
+			cfg.capabilities = blink.get_lsp_capabilities(cfg.capabilities)
+			-- lspconfig[server_name].setup(cfg)
+			vim.lsp.config[server_name].setup(cfg)
+		end,
+	},
+}
+
+-- configure_tinymist(vim.lsp.config)
 end
 
 return {

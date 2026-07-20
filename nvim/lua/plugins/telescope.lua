@@ -65,14 +65,14 @@ local function init()
 		builtin.find_files { cwd = vim.fn.stdpath "config" }
 	end, { desc = "[S]earch [N]eovim files" })
 
-	multi_grep.setup()
+	-- multi_grep.setup()
 end
 
 
 return {
 	{
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.8",
+		-- tag = "0.1.8",
 		dependencies = DEPENDENCIES,
 		init = init,
 	}

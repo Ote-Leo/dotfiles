@@ -3,8 +3,8 @@
 	email = ote.leo73@gmail.com
 [core]
 	editor = nvim
-	whitespace = fix,trailing-space,cr-at-eol
-	autocrlf = true
+	; whitespace = fix,trailing-space,cr-at-eol
+	autocrlf = input
 [alias]
 	st = status -s
 	lol = log --graph --oneline
