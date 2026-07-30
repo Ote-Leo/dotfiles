@@ -4,11 +4,13 @@ import sys
 import os
 import tomllib
 import logging
-import pathlib
+from pathlib import Path
 
 from collections.abc import Sequence
 
 import argparse as ap
+
+from utils import XDG_VALUES
 
 LOGGER = logging.getLogger()
 DEAFULT_CONFIG_PATH = "meta.toml"
@@ -30,7 +32,15 @@ PARSER.add_argument(
 	help="Select some of the configs to symlink (if none were given, then all configurations will be symlinked)",
 )
 
+
+def apply_xdg_environment():
+	for var, path in XDG_VALUES.items():
+		os.environ[var] = str(path)
+
+
 def main(args: Sequence[str] | None = None) -> int:
+	apply_xdg_environment()
+
 	ns = PARSER.parse_args(args)
 	with open(ns.use, "rb") as config:
 		cfgs = tomllib.load(config)
@@ -62,8 +72,8 @@ def main(args: Sequence[str] | None = None) -> int:
 			LOGGER.error(f"no `target_path` specified for config `[{name}.{config_target}]`, skipping")
 			continue
 
-		source = pathlib.Path(os.path.expanduser(os.path.expandvars(source)))
-		target = pathlib.Path(os.path.expanduser(os.path.expandvars(target)))
+		source = Path(os.path.expanduser(os.path.expandvars(source)))
+		target = Path(os.path.expanduser(os.path.expandvars(target)))
 		if target.exists() and target.is_symlink():
 			LOGGER.debug(f"skipping {target} as it already exist")
 			continue
