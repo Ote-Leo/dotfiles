@@ -47,3 +47,8 @@ target_path = "$XDG_CONFIG_HOME/bash/"
 source = "ghostty"
 [ghostty.unix]
 target_path = "$XDG_CONFIG_HOME/ghostty/"
+
+[btop]
+source = "btop"
+[btop.unix]
+target_path = "$XDG_CONFIG_HOME/btop/"
