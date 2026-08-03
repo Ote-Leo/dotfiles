@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -u
+
+selection="$(
+	tmux list-keys -N -F '#{key_table}	#{key}	#{note}' |
+		fzf \
+			--delimiter=$'\t' \
+			--with-nth=2,3 \
+			--layout=reverse \
+			--border \
+			--prompt='Keybinding > ' \
+			--header='Enter: execute · Esc: cancel' \
+			--bind='ctrl-l:clear-screen'
+)" || exit 0
+
+[[ -n $selection ]] || exit 0
+
+IFS=$'\t' read -r key_table key note <<< "$selection"
+
+tmux switch-client -T "$key_table"
+tmux send-keys -K "$key"

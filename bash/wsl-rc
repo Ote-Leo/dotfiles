@@ -1,0 +1,17 @@
+# Environment
+source "$OMARCHY_BASH/envs-wsl"
+
+# Shell behavior and history
+source "$OMARCHY_BASH/shell"
+
+# Aliases and functions
+source "$OMARCHY_BASH/aliases-wsl"
+source "$OMARCHY_BASH/functions-wsl"
+
+# Optional tool initialization
+source "$OMARCHY_BASH/init-wsl"
+
+# Readilne configuration
+if [[ $- == *i* ]]; then
+	bind -f "$OMARCHY_BASH/inputrc"
+fi

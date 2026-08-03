@@ -25,3 +25,25 @@ source = "git"
 target_path = "%USERPROFILE%/.config/git/"
 [git.unix]
 target_path = "$XDG_CONFIG_HOME/git/"
+
+[tmux]
+source = "tmux"
+[tmux.unix]
+target_path = "$XDG_CONFIG_HOME/tmux/"
+
+[starship]
+source = "starship.toml"
+[starship.windows]
+target_path = "%LOCALAPPDATA%/"
+[starship.unix]
+target_path = "$XDG_CONFIG_HOME/"
+
+[bash]
+source = "bash"
+[bash.unix]
+target_path = "$XDG_CONFIG_HOME/bash/"
+
+[ghostty]
+source = "ghostty"
+[ghostty.unix]
+target_path = "$XDG_CONFIG_HOME/ghostty/"
