@@ -8,12 +8,25 @@
 [alias]
 	st = status -s
 	lol = log --graph --oneline
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
 [diff]
-	algorithm = histogram
-	colorMoved = plain
+	algorithm = histogram  # Clearer diffs on moved/edited lines
+	colorMoved = plain  # Highlight moved blocks in diffs
+	mnemonicPrefix = true  # More intuitive refs in diff output
 [help]
 	autocorrect = prompt
 
 [init]
 	defaultBranch = master
+[tag]
+	sort = -version:refname  # Sort version numbers as you would expect
+[branch]
+	sort = -committerdate  # Sort branches by most recent commit first
+[column]
+	ui = auto  # Outuput in columns when possible
+[commit]
+	verbose = true  # Include diff comment in commit message template
 # vim: filetype=gitconfig
