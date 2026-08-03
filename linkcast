@@ -73,7 +73,12 @@ def main(args: Sequence[str] | None = None) -> int:
 			continue
 
 		source = Path(os.path.expanduser(os.path.expandvars(source)))
-		target = Path(os.path.expanduser(os.path.expandvars(target)))
+		target_path = os.path.expanduser(os.path.expandvars(target))
+		target_is_dir = os.path.isdir(target_path) or target_path.endswith(("/", "\\"))
+		target = Path(target_path)
+		if source.is_file() and target_is_dir:
+			target /= source.name
+
 		if target.exists() and target.is_symlink():
 			LOGGER.debug(f"skipping {target} as it already exist")
 			continue
