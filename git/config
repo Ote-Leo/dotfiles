@@ -14,4 +14,6 @@
 [help]
 	autocorrect = prompt
 
+[init]
+	defaultBranch = master
 # vim: filetype=gitconfig
